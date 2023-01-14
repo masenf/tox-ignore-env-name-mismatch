@@ -1,0 +1,44 @@
+[build-system]
+requires = [
+    "setuptools >= 40.0.4",
+    "wheel >= 0.29.0",
+    "setuptools_scm[toml]>=3.4",
+]
+build-backend = 'setuptools.build_meta'
+
+[project]
+name = "tox-ignore-env-name-mismatch"
+description = "A tox4 plugin for reusing a virtualenv across multiple test environments."
+authors = [
+    {name = "Masen Furer", email = "m_github@0x26.net"},
+]
+requires-python = ">=3.7"
+license = {file = "LICENSE"}
+classifiers = [
+    'Development Status :: 4 - Beta',
+    'Intended Audience :: Developers',
+    'License :: OSI Approved :: MIT License',
+    'Operating System :: POSIX',
+    'Operating System :: Microsoft :: Windows',
+    'Operating System :: MacOS :: MacOS X',
+    'Topic :: Software Development :: Testing',
+    'Topic :: Software Development :: Libraries',
+    'Topic :: Utilities',
+    'Programming Language :: Python',
+]
+dynamic = ["version", "readme"]
+
+[project.entry-points.tox]
+ignore_env_name_mismatch = "tox_ignore_env_name_mismatch"
+
+[project.urls]
+Homepage = "https://github.com/masenf/tox-ignore-env-name-mismatch"
+
+[tool.setuptools]
+platforms = ['unix', 'linux', 'osx', 'cygwin', 'win32']
+
+[tool.setuptools.dynamic.readme]
+file = ["README.md"]
+content-type = "text/markdown"
+
+[tool.setuptools_scm]

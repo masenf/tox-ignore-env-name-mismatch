@@ -1,0 +1,71 @@
+name: Test
+
+on:
+  - push
+  - pull_request
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.7', '3.8', '3.9', '3.10', '3.11']
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install tox tox-gh-actions coveralls
+    - name: Test with tox
+      run: tox -- tests/unit --cov tox_ignore_env_name_mismatch
+    - name: Upload coverage data
+      if: always()
+      run: coveralls --service=github
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        COVERALLS_FLAG_NAME: unit-${{ matrix.python-version }}
+        COVERALLS_PARALLEL: true
+  integration:
+    needs: unit
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.7', '3.8', '3.9', '3.10', '3.11']
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install tox tox-gh-actions coveralls
+    - name: Test with tox
+      run: tox -- tests/integration --cov tox_ignore_env_name_mismatch
+    - name: Upload coverage data
+      if: always()
+      run: coveralls --service=github
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        COVERALLS_FLAG_NAME: integration-${{ matrix.python-version }}
+        COVERALLS_PARALLEL: true
+  coveralls:
+    name: Indicate completion to coveralls.io
+    if: ${{ always() }}
+    needs: [unit, integration]
+    runs-on: ubuntu-latest
+    container: python:3-slim
+    steps:
+    - name: Finished
+      run: |
+        python3 -m pip install --upgrade coveralls
+        coveralls --service=github --finish
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
