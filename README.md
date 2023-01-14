@@ -58,8 +58,8 @@ by simply having testenvs share an `env_dir`. In tox 4, this hackaround was
 properly fixed and now tox checks a cached `{envdir}/.tox-info.json` and
 recreates the virtualenv if the current testenv doesn't match what is cached.
 
-This plugin allows a test environment to specifically opt-out of recreating the
-virtualenv when only the `env_name`.
+**This plugin allows a test environment to specifically opt-out of recreating
+the virtualenv when only the `env_name` differs.**
 
 This plugin only supports tox 4.
 
