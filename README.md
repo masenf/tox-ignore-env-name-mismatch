@@ -74,3 +74,15 @@ _fine_, that's what plugins are for).
 * [tox multiple tests, re-using tox environment](https://stackoverflow.com/questions/57222212/tox-multiple-tests-re-using-tox-environment) [2019, StackOverflow]
 * [[tox-dev/tox#425] Ability to share tox environments within a project](https://github.com/tox-dev/tox/issues/425) [2016, Github]
 * [Tox tricks and patterns#Environment reuse](https://blog.ionelmc.ro/2015/04/14/tox-tricks-and-patterns/#environment-reuse) [2015, Blog]
+
+## Changelog
+
+### v0.2 - 2023-01-15
+
+**[BREAKING]** [#3](https://github.com/masenf/tox-ignore-env-name-mismatch/issues/3) Rewrite plugin to use Public API
+
+To upgrade to v0.2, change `ignore_env_name_mismatch = true` to `runner = ignore_env_name_mismatch`.
+
+### v0.1 - 2023-01-14
+
+Initial Release
