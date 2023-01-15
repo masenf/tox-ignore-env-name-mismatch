@@ -1,3 +1,9 @@
+"""
+https://github.com/masenf/tox-ignore-env-name-mismatch
+
+MIT License
+Copyright (c) 2023 Masen Furer
+"""
 from contextlib import contextmanager
 from typing import Any, Iterator, Optional, Sequence, Tuple
 
