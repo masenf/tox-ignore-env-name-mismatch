@@ -12,6 +12,9 @@ use the same `env_dir`, installing this plugin and setting
 `runner = ignore_env_name_mismatch` will allow tox to use the same underlying
 virtualenv for each test environment.
 
+Development status: **EXPRIMENTAL** - The API is evolving and things are breaking.
+Please vendor the plugin as described below, or you _will_ get broken.
+
 ## Usage
 
 1. Install `tox-ignore-env-name-mismatch` in the same environment as `tox`.
@@ -19,28 +22,19 @@ virtualenv for each test environment.
 
 ### To always use this plugin:
 
-#### Install/provision
-
-* Specify `requires = tox-ignore-env-name-mismatch ~= 0.2.0` in the `[tox]`
-  section of `tox.ini`
-
-This will cause `tox` to provision a new virtualenv for `tox` itself and other
-dependencies named in the
-[`requires`](https://tox.wiki/en/latest/config.html#requires) key if the current
-environment does not meet the specification.
-
-Pinning the plugin to a minor version is _highly recommended_ to avoid breaking
-changes.
-
 #### Vendor
 
-* copy `src/tox_ignore_env_name_mismatch.py` to the root of you project
+* copy `src/tox_ignore_env_name_mismatch.py` to the root of your project
   directory as `toxfile.py`
 
 This uses the tox4's new ["inline
 plugin"](https://tox.wiki/en/latest/plugins.html#module-tox.plugin) approach
 instead of relying on the provisioning system (which [can be disabled via
 CLI](https://tox.wiki/en/latest/cli_interface.html#tox---no-provision)).
+
+#### Install/provision
+
+Currently broken, see [issue #6](https://github.com/masenf/tox-ignore-env-name-mismatch/issues/6)
 
 ## Example
 
