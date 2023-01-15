@@ -3,8 +3,6 @@ from textwrap import dedent
 
 import pytest
 
-import tox_ignore_env_name_mismatch
-
 
 pytest_plugins = ["pytester"]
 
@@ -18,20 +16,12 @@ TOUCH_SCRIPT = (
 @pytest.mark.parametrize(
     "ignore_env_name_mismatch_spec, exp_reuse",
     [
-        [f"{tox_ignore_env_name_mismatch.IGNORE_ENV_NAME_MISMATCH_KEY} = true", True],
-        [
-            f"{tox_ignore_env_name_mismatch.IGNORE_ENV_NAME_MISMATCH_KEY_ALT} = true",
-            True,
-        ],
-        [f"{tox_ignore_env_name_mismatch.IGNORE_ENV_NAME_MISMATCH_KEY} = false", False],
-        [
-            f"{tox_ignore_env_name_mismatch.IGNORE_ENV_NAME_MISMATCH_KEY_ALT} = false",
-            False,
-        ],
+        ["runner = ignore_env_name_mismatch", True],
+        ["", False],
     ],
 )
 def test_testenv_reuse(pytester, monkeypatch, ignore_env_name_mismatch_spec, exp_reuse):
-    """Environment should not be recreated if ignore_env_name_mismatch is true."""
+    """Environment should not be recreated if runner is ignore_env_name_mismatch."""
     envlist = ["foo", "bar", "baz"]
     monkeypatch.delenv(
         "TOX_WORK_DIR", raising=False
@@ -69,9 +59,10 @@ def test_testenv_no_reuse(pytester, monkeypatch):
             """
             [tox]
             envlist = foo, bar
+
             [testenv]
             env_dir = {toxworkdir}{/}shared
-            ignore_env_name_mismatch = true
+            runner = ignore_env_name_mismatch
             deps = wheel
             commands = %s
 
