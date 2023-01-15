@@ -1,4 +1,6 @@
-from tox.config.sets import EnvConfigSet
+from contextlib import contextmanager
+from typing import Any, Iterator, Optional, Sequence, Tuple
+
 from tox.plugin import impl
 from tox.tox_env.api import ToxEnv
 from tox.tox_env.info import Info
@@ -6,40 +8,64 @@ from tox.tox_env.python.virtual_env.runner import VirtualEnvRunner
 from tox.tox_env.register import ToxEnvRegister
 
 
-IGNORE_ENV_NAME_MISMATCH_KEY = "ignore_env_name_mismatch"
-IGNORE_ENV_NAME_MISMATCH_KEY_ALT = "ignore_envname_mismatch"
+class FilteredInfo(Info):
+    """Subclass of Info that optionally filters specific keys during compare()."""
+
+    def __init__(
+        self,
+        *args: Any,
+        filter_keys: Optional[Sequence[str]] = None,
+        filter_section: Optional[str] = None,
+        **kwargs: Any,
+    ):
+        """
+        :param filter_keys: key names to pop from value
+        :param filter_section: if specified, only pop filter_keys when the compared section matches
+
+        All other args and kwargs are passed to super().__init__
+        """
+        self.filter_keys = filter_keys
+        self.filter_section = filter_section
+        super().__init__(*args, **kwargs)
+
+    @contextmanager
+    def compare(
+        self,
+        value: Any,
+        section: str,
+        sub_section: Optional[str] = None,
+    ) -> Iterator[Tuple[bool, Optional[Any]]]:
+        """Perform comparison and update cached info after filtering `value`."""
+        if self.filter_section is None or section == self.filter_section:
+            try:
+                value = value.copy()
+            except AttributeError:  # pragma: no cover
+                pass
+            else:
+                for fkey in self.filter_keys or []:
+                    value.pop(fkey, None)
+        with super().compare(value, section, sub_section) as rv:
+            yield rv
 
 
-class ReusableVirtualEnvRunner(VirtualEnvRunner):
-    """EnvRunner that optionall ignores name mismatch."""
+class IgnoreEnvNameMismatchVirtualEnvRunner(VirtualEnvRunner):
+    """EnvRunner that does NOT save the env name as part of the cached info."""
 
     @staticmethod
     def id() -> str:
-        return "virtualenv-reusable"
+        return "ignore_env_name_mismatch"
 
     @property
     def cache(self) -> Info:
-        """Ignore changes in the "name" if env has `ignore_env_name_mismatch = true`."""
-        info = super().cache
-        toxenv_info = info._content.get(ToxEnv.__name__, {})
-        if self.conf[IGNORE_ENV_NAME_MISMATCH_KEY] and toxenv_info:
-            toxenv_info["name"] = self.conf.name
-        return info
-
-
-@impl
-def tox_add_env_config(env_conf: EnvConfigSet) -> None:
-    """tox4 entry point: add ignore_env_name_config env config."""
-    env_conf.add_config(
-        keys=[IGNORE_ENV_NAME_MISMATCH_KEY, IGNORE_ENV_NAME_MISMATCH_KEY_ALT],
-        default=False,
-        of_type=bool,
-        desc="Do not recreate venv when the testenv name differs.",
-    )
+        """Return a modified Info class that does NOT pass "name" key to `Info.compare`."""
+        return FilteredInfo(
+            self.env_dir,
+            filter_keys=["name"],
+            filter_section=ToxEnv.__name__,
+        )
 
 
 @impl
 def tox_register_tox_env(register: ToxEnvRegister) -> None:
-    """tox4 entry point: set ReuseVirtualEnvRunner as default_env_runner."""
-    register.add_run_env(ReusableVirtualEnvRunner)
-    register.default_env_runner = ReusableVirtualEnvRunner.id()
+    """tox4 entry point: add IgnoreEnvNameMismatchVirtualEnvRunner to registry."""
+    register.add_run_env(IgnoreEnvNameMismatchVirtualEnvRunner)
