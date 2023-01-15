@@ -9,13 +9,13 @@ Reuse virtualenvs with multiple `tox` test environments.
 
 If two environments have compatible specifications (basically, same `deps`) and
 use the same `env_dir`, installing this plugin and setting
-`ignore_env_name_mismatch = true` will allow tox to use the same underlying
+`runner = ignore_env_name_mismatch` will allow tox to use the same underlying
 virtualenv for each test environment.
 
 ## Usage
 
 1. Install `tox-ignore-env-name-mismatch` in the same environment as `tox`.
-2. Set `ignore_env_name_mismatch = true` to opt-out of recreating the virtualenv when the cached name differs from the current env name.
+2. Set `runner = ignore_env_name_mismatch` in a testenv to opt-out of recreating the virtualenv when the env name changes.
 * To always use this plugin, specify `requires = tox-ignore-env-name-mismatch` in the `[tox]` section
   of `tox.ini`
 
@@ -32,7 +32,7 @@ commands = pytest {posargs}
 
 [testenv:{lint,format,types}]
 env_dir = {toxworkdir}{/}static
-ignore_env_name_mismatch = true
+runner = ignore_env_name_mismatch
 deps =
     black
     flake8
