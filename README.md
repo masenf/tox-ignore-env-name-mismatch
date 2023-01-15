@@ -21,7 +21,7 @@ virtualenv for each test environment.
 
 #### Install/provision
 
-* Specify `requires = tox-ignore-env-name-mismatch~=0.2.0` in the `[tox]`
+* Specify `requires = tox-ignore-env-name-mismatch ~= 0.2.0` in the `[tox]`
   section of `tox.ini`
 
 This will cause `tox` to provision a new virtualenv for `tox` itself and other
@@ -47,7 +47,7 @@ CLI](https://tox.wiki/en/latest/cli_interface.html#tox---no-provision)).
 ```
 [tox]
 envlist = py39,py310,py311,lint,format,types
-requires = tox-ignore-env-name-mismatch~=0.2.0
+requires = tox-ignore-env-name-mismatch ~= 0.2.0
 
 [testenv]
 deps = pytest
