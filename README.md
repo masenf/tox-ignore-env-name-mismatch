@@ -22,19 +22,6 @@ Please vendor the plugin as described below, or you _will_ get broken.
 
 ### To always use this plugin:
 
-#### Install/provision
-
-* Specify `requires = tox-ignore-env-name-mismatch ~= 0.2.0` in the `[tox]`
-  section of `tox.ini`
-
-This will cause `tox` to provision a new virtualenv for `tox` itself and other
-dependencies named in the
-[`requires`](https://tox.wiki/en/latest/config.html#requires) key if the current
-environment does not meet the specification.
-
-Pinning the plugin to a minor version is _highly recommended_ to avoid breaking
-changes.
-
 #### Vendor
 
 * copy `src/tox_ignore_env_name_mismatch.py` to the root of your project
@@ -45,12 +32,34 @@ plugin"](https://tox.wiki/en/latest/plugins.html#module-tox.plugin) approach
 instead of relying on the provisioning system (which [can be disabled via
 CLI](https://tox.wiki/en/latest/cli_interface.html#tox---no-provision)).
 
+#### Install/provision
+
+```
+[tox]
+min_version = 4.3.3
+requires =
+    tox-ignore-env-name-mismatch ~= 0.2.0
+```
+
+This will cause `tox` to provision a new virtualenv for `tox` itself and other
+dependencies named in the
+[`requires`](https://tox.wiki/en/latest/config.html#requires) key if the current
+environment does not meet the specification.
+
+Pinning the plugin to a minor version is _highly recommended_ to avoid breaking
+changes.
+
+NOTE: tox < 4.3.3 had [a bug](https://github.com/tox-dev/tox/issues/2862) which
+prevented this type of installation.
+
 ## Example
 
 ```
 [tox]
 envlist = py39,py310,py311,lint,format,types
-requires = tox-ignore-env-name-mismatch ~= 0.2.0
+min_version = 4.3.3
+requires =
+    tox-ignore-env-name-mismatch ~= 0.2.0
 
 [testenv]
 deps = pytest
