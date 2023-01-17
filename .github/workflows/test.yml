@@ -49,6 +49,10 @@ jobs:
         python -m pip install tox tox-gh-actions coveralls
     - name: Test with tox
       run: tox -- tests/integration --cov tox_ignore_env_name_mismatch
+    - name: Example should work
+      run: |
+        cd examples/
+        tox -vv
     - name: Upload coverage data
       if: always()
       run: coveralls --service=github
