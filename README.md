@@ -34,14 +34,32 @@ CLI](https://tox.wiki/en/latest/cli_interface.html#tox---no-provision)).
 
 #### Install/provision
 
-Currently broken, see [issue #6](https://github.com/masenf/tox-ignore-env-name-mismatch/issues/6)
+```
+[tox]
+min_version = 4.3.3
+requires =
+    tox-ignore-env-name-mismatch ~= 0.2.0
+```
+
+This will cause `tox` to provision a new virtualenv for `tox` itself and other
+dependencies named in the
+[`requires`](https://tox.wiki/en/latest/config.html#requires) key if the current
+environment does not meet the specification.
+
+Pinning the plugin to a minor version is _highly recommended_ to avoid breaking
+changes.
+
+NOTE: tox < 4.3.3 had [a bug](https://github.com/tox-dev/tox/issues/2862) which
+prevented this type of installation.
 
 ## Example
 
 ```
 [tox]
 envlist = py39,py310,py311,lint,format,types
-requires = tox-ignore-env-name-mismatch ~= 0.2.0
+min_version = 4.3.3
+requires =
+    tox-ignore-env-name-mismatch ~= 0.2.0
 
 [testenv]
 deps = pytest
